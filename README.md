@@ -15,6 +15,80 @@ linux相关电子书
 yum安装：yum remove xxx
 rpm包安装：rpm -e xxx
 tar包安装：直接删除文件或make uninstall xxx
+# Centos使用 yum history 卸载软件及其依赖
+ 
+yum带有历史记录功能，可以查看过往的事务，重做或回滚这些事务
+
+最重要的是可以连带依赖一并删除
+
+yum history
+
+root@localhost ~]# yum history
+已加载插件：fastestmirror
+ID     | 登录用户                 | 日期和时间       | 操作           | 变更数 
+-------------------------------------------------------------------------------
+     3 | root <root>              | 2018-08-17 00:02 | Install        |   30   
+     2 | root <root>              | 2018-08-17 00:01 | Install        |    4   
+     1 | 系统 <空>                | 2018-08-17 07:39 | Install        |  299   
+history list
+=============================================================================
+
+在历史中搜索某个软件包是
+
+yum history list Name/ ID
+
+[root@localhost ~]# yum history list nxlog-ce
+已加载插件：fastestmirror
+ID     | 命令行                   | 日期和时间       | 操作           | 变更数 
+-------------------------------------------------------------------------------
+     3 | localinstall nxlog-ce-2. | 2018-08-17 00:02 | Install        |   30   
+history list
+[root@localhost ~]# yum history list 5
+已加载插件：fastestmirror
+ID     | 命令行                   | 日期和时间       | 操作           | 变更数 
+-------------------------------------------------------------------------------
+     5 | install vim              | 2018-08-17 00:43 | Install        |   31   
+=============================================================================
+
+回滚是
+
+yum history undo ID
+
+[root@localhost ~]# yum history undo 5
+已加载插件：fastestmirror
+Undoing transaction 5, from Fri Aug 17 00:43:45 2018
+*
+*
+*
+事务概要
+===========================================================================================
+移除  31 软件包
+ 
+安装大小：60 M
+是否继续？[y/N]：y
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+*
+*
+*
+删除:
+  gpm-libs.x86_64 0:1.20.7-5.el7                      perl.x86_64 4:5.16.3-292.el7                 perl-Carp.noarch 0:1.26-244.el7              
+  perl-Encode.x86_64 0:2.51-7.el7                     perl-Exporter.noarch 0:5.68-3.el7            perl-File-Path.noarch 0:2.09-2.el7           
+  perl-File-Temp.noarch 0:0.23.01-3.el7               perl-Filter.x86_64 0:1.49-3.el7              perl-Getopt-Long.noarch 0:2.40-3.el7         
+  perl-HTTP-Tiny.noarch 0:0.033-3.el7                 perl-PathTools.x86_64 0:3.40-5.el7           perl-Pod-Escapes.noarch 1:1.04-292.el7       
+  perl-Pod-Perldoc.noarch 0:3.20-4.el7                perl-Pod-Simple.noarch 1:3.28-4.el7          perl-Pod-Usage.noarch 0:1.63-3.el7           
+  perl-Scalar-List-Utils.x86_64 0:1.27-248.el7        perl-Socket.x86_64 0:2.010-4.el7             perl-Storable.x86_64 0:2.45-3.el7            
+  perl-Text-ParseWords.noarch 0:3.29-4.el7            perl-Time-HiRes.x86_64 4:1.9725-3.el7        perl-Time-Local.noarch 0:1.2300-2.el7        
+  perl-constant.noarch 0:1.27-2.el7                   perl-libs.x86_64 4:5.16.3-292.el7            perl-macros.x86_64 4:5.16.3-292.el7          
+  perl-parent.noarch 1:0.225-244.el7                  perl-podlators.noarch 0:2.5.1-3.el7          perl-threads.x86_64 0:1.87-4.el7             
+  perl-threads-shared.x86_64 0:1.43-6.el7             vim-common.x86_64 2:7.4.160-4.el7            vim-enhanced.x86_64 2:7.4.160-4.el7          
+  vim-filesystem.x86_64 2:7.4.160-4.el7              
+ 
+完毕！
+ 
  
 # nginx完整启动脚本
 #!/bin/sh
