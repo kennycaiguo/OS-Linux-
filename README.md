@@ -1,5 +1,6 @@
 # OS-Linux-
 linux相关电子书
+# <a href="https://man.linuxde.net/download/CentOS_6_5>CentOS6.5下载，CentOS 6.5 iso下载</a>
 # VMware虚拟机不能打开的解决办法
 	打开运行命令，
   输入services.msc
