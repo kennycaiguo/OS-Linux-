@@ -1,0 +1,95 @@
+﻿swoole编程错误解决:Linux下Socket编程的端口问题( Bind error: Address already in use )
+发布于 2018-05-31   248人围观  0条评论
+在进行linux网络编程时，每次修改了源代码并再次编译运行时，常遇到下面的地使用错误：
+
+ 
+Bind error: Address already in use﻿​
+ 
+
+虽然用Ctrl＋C强制结束了进程，但错误依然存在，用netstat -an |grep 5120和ps aux |grep 5120都
+还能看到刚才用Ctrl+C“强制结束”了的进程，端口还是使用中，只好每次用kill结束进程，很是麻烦。
+昨天晚上无意间浏览到IBM网站上 的一篇题为《Linux 套接字编程中的 5 个隐患》的文章，恍然大悟，
+今天试了一下，果然解决问题，在此表示感谢，也希望更多的coder看到这篇文章，避免出错。
+
+ 
+
+主要代码为：
+
+ 
+
+int on；
+ 
+on = 1;
+ret = setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );﻿​
+ 现在我每次用Ctrl＋C强制结束进程后，用netstat和ps都还能看到端口在使用中，但运行程序不会出现
+“Address already in use”的错误了，实现了端口的重用。
+
+ 
+
+ 
+
+ 
+
+以下是原文中的第三个隐患－－地址使用错误
+
+ 
+
+地址使用错误（EADDRINUSE）
+
+ 
+
+您可以使用 bind API 函数来绑定一个地址（一个接口和一个端口）到一个套接字端点。可以在服务器设置中使用
+这个函数，以便限制可能有连接到来的接口。也可以在客户端设置中使用 这个函数，以便限制应当供出去的连接
+所使用的接口。bind 最常见的用法是关联端口号和服务器，并使用通配符地址（INADDR_ANY），它允许任何
+接口为到来的连接所使用。
+
+ 
+
+bind 普遍遭遇的问题是试图绑定一个已经在使用的端口。该陷阱是也许没有活动的套接字存在，但仍然禁止绑定
+端口（bind 返回 EADDRINUSE），它由 TCP 套接字状态 TIME_WAIT 引起。该状态在套接字关闭后约保留 2 
+到 4 分钟。在 TIME_WAIT 状态退出之后，套接字被删除，该地址才能被重新绑定而不出问题。
+
+ 
+
+等待 TIME_WAIT 结束可能是令人恼火的一件事，特别是如果您正在开发一个套接字服务器，就需要停止服务器来
+做一些改动，然后重启。幸运的是，有方法可以避开 TIME_WAIT 状态。可以给套接字应用 SO_REUSEADDR 套
+接字选项，以便端口可以马上重用。
+
+ 
+
+考虑清单 3 的例子。在绑定地址之前，我以 SO_REUSEADDR 选项调用 setsockopt。为了允许地址重用，我设置
+整型参数（on）为 1 （不然，可以设为 0 来禁止地址重用）。
+
+ 
+
+
+使用 SO_REUSEADDR 套接字选项避免地址使用错误
+
+ 
+
+ 
+
+ 
+
+int sock, ret, on;
+struct sockaddr_in servaddr;
+/* Create a new stream (TCP) socket */
+sock = socket( AF_INET, SOCK_STREAM, 0 ):
+/* Enable address reuse */
+on = 1;
+ret = setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
+/* Allow connections to port 8080 from any available interface */
+memset( &servaddr, 0, sizeof(servaddr) );
+servaddr.sin_family = AF_INET;
+servaddr.sin_addr.s_addr = htonl( INADDR_ANY );
+servaddr.sin_port = htons( 45000 );
+/* Bind to the address (interface/port) */
+ret = bind( sock, (struct sockaddr *)&servaddr, sizeof(servaddr) );﻿​
+
+在应用了 SO_REUSEADDR 选项之后，bind API 函数将允许地址的立即重用。
+
+ 
+
+ 
+
+ 

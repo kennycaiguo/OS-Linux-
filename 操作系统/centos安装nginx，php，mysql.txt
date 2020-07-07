@@ -1,0 +1,296 @@
+1.nginx
+a.yum 安装
+(1)#(root 用户） yum localinstall https://nginx.org/packages/centos/7/noarch/RPMS/nginx-nr-agent-2.0.0-12.el7.ngx.noarch.rpm
+(2)查看源 yum repolist enabled |grep "nginx*"
+(3) yum -y install nginx
+
+启动nginx：# service nginx start
+
+设置nginx开机启动
+systemctl enable nginx.service
+
+查看开机启动是否成功
+systemctl list-dependencies|grep nginx
+
+b.源码安装
+
+0.升级系统
+yum update
+
+1.安装make
+yum -y install gcc automake autoconf libtool make
+
+2.安装g++
+yum install gcc gcc-c++
+
+3.安装pcre库
+yum install pcre pcre-devel
+
+4.安装zlib库
+yum install zlib zlib-devel
+
+5.安装openssl
+yum install openssl openssl-devel
+
+6.下载nginx
+wget https://nginx.org/download/nginx-1.12.2.tar.gz
+
+7.解压tar文件
+tar -xzf nginx-1.12.2.tar.gz
+
+8.进入目录
+cd nginx-1.12.2
+
+9.执行配置文件
+./configure
+
+10.安装nginx 
+make && make install
+
+11.进入usr/local/nginx/sbin
+cd  /usr/local/nginx/sbin
+
+12.启动nginx
+#   ./nginx
+
+设置nginx开机启动
+a.进入etc/init.d目录
+cd /etc/init.d
+b.创建nginx文件
+vi nginx
+
+内容如下：
+#!/bin/bash
+# nginx Startup script for the Nginx HTTP Server
+# it is v.0.0.2 version.
+# chkconfig: - 85 15
+# description: Nginx is a high-performance web and proxy server.
+#              It has a lot of features, but it's not for everyone.
+# processname: nginx
+# pidfile: /usr/local/nginx/logs/nginx.pid
+# config: /usr/local/nginx/conf/nginx.conf
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+NGINX_HOME=/usr/local/nginx/sbin
+NGINX_CONF=/usr/local/nginx/conf
+
+nginxd=/usr/local/nginx/sbin/nginx
+nginx_config=/usr/local/nginx/conf/nginx.conf
+nginx_pid=/var/run/nginx.pid
+RETVAL=0
+prog="nginx"
+# Source function library.
+. /etc/rc.d/init.d/functions
+# Source networking configuration.
+. /etc/sysconfig/network
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+[ -x $nginxd ] || exit 0
+# Start nginx daemons functions.
+start() {
+if [ -e $nginx_pid ];then
+   echo "nginx already running...."
+   exit 1
+fi
+   echo -n $"Starting $prog: "
+   daemon $nginxd -c ${nginx_config}
+   RETVAL=$?
+   echo
+   [ $RETVAL = 0 ] && touch /var/lock/subsys/nginx
+   return $RETVAL
+}
+# Stop nginx daemons functions.
+stop() {
+        echo -n $"Stopping $prog: "
+        killproc $nginxd
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && rm -f /var/lock/subsys/nginx /var/run/nginx.pid
+}
+# reload nginx service functions.
+reload() {
+    echo -n $"Reloading $prog: "
+    #kill -HUP `cat ${nginx_pid}`
+    killproc $nginxd -HUP
+    RETVAL=$?
+    echo
+}
+# See how we were called.
+case "$1" in
+start)
+        start
+        ;;
+stop)
+        stop
+        ;;
+reload)
+        reload
+        ;;
+restart)
+        stop
+        start
+        ;;
+status)
+        status $prog
+        RETVAL=$?
+        ;;
+*)
+        echo $"Usage: $prog {start|stop|restart|reload|status|help}"
+        exit 1
+esac
+exit $RETVAL
+c.保存退出
+d.设置执行权限
+chmod a+x /etc/init.d/nginx
+
+e.注册成服务
+chkconfig --add nginx
+f.设置开机启动
+chkconfig nginx on
+
+systemctl enable nginx.service
+
+
+2.php
+(1)安装依赖包
+yum install -y  gd libjpeg* libpng* libxpm* php-gd libxml2 libxml2-devel   libcurl-devel freetype-devel    kernel keyutils patch perl kernel-headers   gtk+-devel   glibc  libgomp  libstdc++-devel keyutils-libs-devel libsepol-devel libselinux-devel krb5-devel fontconfig fontconfig-devel  gettext gettext-devel  ncurses*  libtool*  patch policycoreutils bison  
+
+yum  install -y  compat*  --skip-broken  这个要独立安装，因为有 --skip-broken 选项
+
+(2)下载php
+
+wget https://www.php.net/distributions/php-7.1.15.tar.gz
+(3)解压缩
+ 
+tar xvf php-7.1.15.tar.gz
+
+(4)进入目录
+ 
+cd php-7.1.15
+
+(5) 配置php
+./configure --prefix=/usr/local/php  --with-config-file-path=/usr/local/php/etc   --with-mysql=mysqlnd  --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-zlib --with-libxml-dir  --with-gd  --with-iconv  --with-png-dir  --with-jpeg-dir --enable-sockets  --enable-mbstring  --enable-inline-optimization  --enable-zend-multibyte --with-freetype-dir  --enable-fpm
+
+(./configure --prefix=/usr/local/php  --with-config-file-path=/usr/local/php/etc   --enable-fpm)
+
+
+(6)编译安装
+make && make install
+
+(7)拷贝php.ini-production到 /usr/local/php7/etc
+ 
+cd /usr/local/php/etc/
+cp /home/kenny/php-7.1.15/php.ini-production  php.ini
+
+
+
+(8)删除系统自带的配置文件
+rm -rf /etc/php.ini
+
+(9)添加软连接
+ln -s /usr/local/php/etc/php.ini  /etc/php.ini
+
+(10)拷贝php-fpm配置文件
+ 
+cd /usr/local/php/etc
+cp php-fpm.conf.default  php-fpm.conf
+
+(11)修改php-fpm.conf
+将 ;pid run=php-fpm.pid 前面的分号去掉并保存
+vi php-fpm.conf
+
+(12)
+cp /usr/local/php/etc/php-fpm.d/www.conf.default  /usr/local/php/etc/php-fpm.d/www.conf
+如果指定了nginx的用户为www，需要修改usr/local/php/etc/php-fpm.d/www.conf
+user = www    #设置php-fpm运行账号为www
+group= www  #设置php-fpm运行组为www
+
+(13)设置开机启动(当前位置：/home/kenny/php-7.1.15）
+cp sapi/fpm/init.d.php-fpm  /etc/rc.d/init.d/php-fpm #拷贝到启动目录
+chmod +x /etc/rc.d/init.d/php-fpm #添加执行权限
+chkconfig php-fpm on  #设置开机启动
+service php-fpm start   #启动
+
+(14) 配置nginx注册php
+a.修改配置文件：/usr/local/nginx/conf/nginx.conf
+<1>.去掉location ~\.php$等几行前面的"#"
+      即以下几行：
+         location ~ \.php$ {
+           root           html;
+            fastcgi_pass   127.0.0.1:9000;
+           fastcgi_index  index.php;
+           fastcgi_param  SCRIPT_FILENAME   /scripts$fastcgi_script_name;
+           include        fastcgi_params;
+        }
+<2>.将fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name
+改为 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name
+
+(15)重新加载nginx的配置文件
+cd /usr/local/nginx/sbin
+./nginx -s reload
+
+
+3.MySQl
+(1)下载mysql
+wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.18-1.el7.x86_64.rpm-bundle.tar
+
+(2)解压文件
+tar -vxf mysql-5.7.18-1.el7.x86_64.rpm-bundle.tar
+
+(3)用rpm命令安装
+首先
+rpm -ivh mysql-community-common-5.7.18-1.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-5.7.18-1.el7.x86_64.rpm
+出错处理：rpm -qa|grep mariadb(查看这个包在哪里）
+                 rpm -e --nodeps mariadb-libs-5.5.60-1.el7_5.x86_64(卸载这个包）
+然后：
+rpm -ivh mysql-community-common-5.7.18-1.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-5.7.18-1.el7.x86_64.rpm
+rpm -ivh mysql-community-client-5.7.18-1.el7.x86_64.rpm
+rpm -ivh  mysql-community-server-5.7.18-1.el7.x86_64.rpm
+rpm -ivh mysql-community-devel-5.7.18-1.el7.x86_64.rpm
+
+(4)设置初始化
+mkdir  -p /data/www  #创建数据库保存目录
+//chown -R www:www /data/www/  #设置所有者
+//chmod 700 /data/www -R
+//useradd mysql -s /sbin/nologin #创建用户mysql，不允许直接登陆系统
+mkdir -p /var/mysql/data #创建MySQl数据库存放目录
+ chown -R mysql:mysql /var/mysql/data #设置MySQl数据库目录权限
+chmod 777  /etc/my.cnf  #修改文件的权限
+vi etc/my.cnf在[mysqld]部分修改为 datadir= /var/mysql/data
+
+
+(5)mysqld --initialize --user=mysql (生成mysql系统数据库）
+
+(6)看root用户的随机初始密码并且提取到一个文件保存
+cat /var/log/mysqld.log
+ 
+
+
+(7)启动mysql服务
+systemctl start mysqld
+
+(8)查看msqld是否启动
+systemctl  status  mysqld
+
+(9)登陆mysql
+mysql -uroot -p
+使用上面的密码
+
+(10)修改mysql密码
+alter user 'root'@'localhost' identified by '123'
+
+(11)设置开机启动
+systemctl  enable mysqld.service
+
+(12)查看是否设置成功
+systemctl list-dependencies |grep mysqld
+ 
+
+
+
+
+
+
+

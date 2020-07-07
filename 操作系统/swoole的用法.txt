@@ -1,0 +1,13 @@
+swoole的用法以test.php为例：
+在默认的web目录下面（源码安装的是/usr/local/nginx/html/ ,非源码安装的在/home/wwwroot/default/)
+我的centos的nmp是源码安装的，所以是/usr/local/nginx/html/。
+1.创建一个test.php并且拷贝到web目录下面
+2.打开终端，输入命令php test.php,不要关闭终端
+3.打开浏览器，输入：http://127.0.0.1:9501/ 回车
+4.效果：在浏览器中用粗体显示：Hello Swoole. #8054
+
+中断程序运行：在终端中按下ctrl+c
+然后查看是否还有程序占用9501端口：netstat -apn|grep 9501
+
+如果有，就可以输入：kill 3495(这个是进程号）即可
+
