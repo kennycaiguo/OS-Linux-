@@ -5,6 +5,29 @@ linux相关电子书
 # <a href="http://www.linuxdown.net/CentOS/2014/0928/3371.html">CentOS 6.5 iso下载3</a>
 # <a href="https://developer.aliyun.com/article/443121">Centos 6.5X64 安装mysql5.6</a>
 
+# Centos7 安装dotnet core sdk 3.1:
+•	
+随笔 - 194  文章 - 0  评论 - 1958
+CentOS 7 安装.NET Core 3.1
+一.添加dotnet产品Feed
+在安装.NET Core之前，您需要注册Microsoft产品Feed。 这只需要做一次。 首先，注册Microsoft签名密钥，然后添加Microsoft产品Feed。
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sh -c 'echo -e "[packages-microsoft-com-prod]\nname=packages-microsoft-com-prod \nbaseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel7.3-prod\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/dotnetdev.repo'
+二.安装 .NET Core SDK
+请先从系统中删除任何以前的预览版本的.NET Core，然后再进行下一步。
+以下命令更新可用于安装的产品列表，安装.NET Core所需的组件，然后安装.NET Core SDK。
+yum update
+yum install libunwind libicu
+yum install dotnet-sdk-3.1
+三.编写代码验证安装
+使用命令新建一个控制台应用程序
+dotnet new console -o hwapp
+cd hwapp
+该命令将会新建一个 Program.cs 文件，将会输出“Hello Word”
+四.运行程序
+dotnet run
+
+
 # VMware虚拟机不能打开的解决办法
 	打开运行命令，
   输入services.msc
