@@ -4,6 +4,7 @@ linux相关电子书
 # <a href="http://mirror.nsc.liu.se/centos-store/6.5/isos/x86_64/">CentOS 6.5 iso下载2</a>
 # <a href="http://www.linuxdown.net/CentOS/2014/0928/3371.html">CentOS 6.5 iso下载3</a>
 # <a href="https://developer.aliyun.com/article/443121">Centos 6.5X64 安装mysql5.6</a>
+# <a href="https://github.com/kennycaiguo/OS-Linux-and-more/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/centos6.5X64%E5%AE%89%E8%A3%85fastdfs.txt">cnetos6.564位安装fastDFS</a>
 # <a href="https://learnku.com/articles/35042">MySQL 安装常见错误</a>
 # <a href="https://juejin.im/post/5c088b066fb9a049d4419985">CentOS 7 - 安装MySQL 5.7</a>
 # 关于mysql5.7的配置问题
