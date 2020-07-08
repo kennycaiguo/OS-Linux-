@@ -6,6 +6,152 @@ linux相关电子书
 # <a href="https://developer.aliyun.com/article/443121">Centos 6.5X64 安装mysql5.6</a>
 # <a href="https://learnku.com/articles/35042">MySQL 安装常见错误</a>
 # <a href="https://juejin.im/post/5c088b066fb9a049d4419985">CentOS 7 - 安装MySQL 5.7</a>
+# 关于mysql5.7的配置问题
+想进入mysql的时候碰到问题
+
+[root@localhost yum.repos.d]# mysql -uroot -p
+Enter password: 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+[root@localhost yum.repos.d]# mysql -uroot -p
+Enter password: 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+[root@localhost yum.repos.d]# mysql -uroot 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+ 
+经过查文档发现这是由于没有在user表中写入用户信息，只能使用不启动授权表的启动方式：
+修改my.cnf配置
+
+[root@localhost etc]# vim /etc/my.cnf
+
+# For advice on how to change settings please see
+# http://dev.mysql.com/doc/refman/5.7/en/server-configuration-defaults.html
+
+[mysqld]
+#
+# Remove leading # and set to the amount of RAM for the most important data
+# cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
+# innodb_buffer_pool_size = 128M
+#
+# Remove leading # to turn on a very important data integrity option: logging
+# changes to the binary log between backups.
+# log_bin
+#
+# Remove leading # to set options mainly useful for reporting servers.
+# The server defaults are faster for transactions and fast SELECTs.
+# Adjust sizes as needed, experiment to find the optimal values.
+# join_buffer_size = 128M
+# sort_buffer_size = 2M
+# read_rnd_buffer_size = 2M
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+skip-grant-tables
+ 
+
+重启MySQL服务
+
+[root@localhost etc]# systemctl restart mysqld
+1
+进入数据库，修改user表
+
+[root@localhost etc]# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.7.19 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> use mysql
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+ 
+这时候如果输入mysql> update user set password=password("oracle") where user="root";会报错
+ERROR 1054 (42S22): Unknown column 'password' in 'field list'
+因为这是由于5.7版本user表的字段名做了变更
+查询user表的字段：select * from user\G
+可知道password字段已经变成了authentication_string字段，对我们的代码稍作修改即可：
+mysql> update mysql.user set authentication_string=password('oracle') where user='root' ;
+Query OK, 1 row affected, 1 warning (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 1
+ 
+刷新系统权限并退出
+
+mysql> flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> quit
+Bye
+
+再次进入MySQL发现还是有问题
+
+[root@localhost etc]# mysql -u root -p 
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 5
+Server version: 5.7.19
+
+Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases
+    -> ;
+ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.
+mysql> set password=password('oracle');
+ERROR 1819 (HY000): Your password does not satisfy the current policy requirements
+ 
+查文档后发现原来MySQL 5.7在安装后会自动启动密码限制进程，密码必须有一定复杂度，即包含大小写和数字，如’MyNewPass4!’，我给出的密码oracle显然不符合标准
+由于只是测试环境，我不希望用复杂的密码，所以只能去修改密码限制了：
+
+mysql> set global validate_password_policy=0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> set global validate_password_length=1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> set global validate_password_mixed_case_count=2;
+Query OK, 0 rows affected (0.00 sec)
+ 
+这时再去修改密码即可
+
+mysql> alter user 'root'@'localhost' identified by 'oracle';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> quit
+Bye
+ 
+此时MySQL数据库正式配置完成
+ 
 # <a href="https://blog.csdn.net/dejunyang/article/details/79836502">Centos 7 安装 vs code</a>
 # Centos7 安装dotnet core sdk 3.1:
 •	
