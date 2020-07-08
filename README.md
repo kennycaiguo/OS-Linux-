@@ -4,6 +4,7 @@ linux相关电子书
 # <a href="http://mirror.nsc.liu.se/centos-store/6.5/isos/x86_64/">CentOS 6.5 iso下载2</a>
 # <a href="http://www.linuxdown.net/CentOS/2014/0928/3371.html">CentOS 6.5 iso下载3</a>
 # <a href="https://developer.aliyun.com/article/443121">Centos 6.5X64 安装mysql5.6</a>
+# <a href="https://learnku.com/articles/35042">MySQL 安装常见错误</a>
 # <a href="https://blog.csdn.net/dejunyang/article/details/79836502">Centos 7 安装 vs code</a>
 # Centos7 安装dotnet core sdk 3.1:
 •	
