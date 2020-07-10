@@ -7,6 +7,7 @@ linux相关电子书
 # <a href="https://github.com/kennycaiguo/OS-Linux-and-more/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/centos6.5X64%E5%AE%89%E8%A3%85fastdfs.txt">cnetos6.564位安装fastDFS</a>
 # <a href="https://learnku.com/articles/35042">MySQL 安装常见错误</a>
 # <a href="https://juejin.im/post/5c088b066fb9a049d4419985">CentOS 7 - 安装MySQL 5.7</a>
+# <a href="https://www.jianshu.com/p/5cad576e5270">CentOS 7修改MySQL密码 </a>
 # 关于mysql5.7的配置问题
 想进入mysql的时候碰到问题
 
