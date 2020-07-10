@@ -1,0 +1,61 @@
+1.)安装依赖
+ yum -y install gcc-c++ perl-devel pcre-devel openssl-deval zlib-devel wget
+ yum -y install unzip zip
+ yum -y install libevent
+
+ 2.)将如下文件上传到centos6.5 /root目录下面(下载地址：https://github.com/downgoon/hello-world/wiki/FastDFS-Install-&-Upload-&-Download)
+    fastdfs-5.08.tar.gz  
+    fastdfs-nginx-module.zip（fastdfs-nginx-module-master.20170125.zip名字太长，将其改短）
+    libfastcommon.zip（libfastcommon-master.20170125.zip名字太长，将其改短）
+    nginx-1.10.2.tar.gz
+
+3.)unzip   libfastcommon.zip
+4) cd  libfastcommon
+4.1)  ./make.sh && ./make.sh install
+4.2) cd ..
+
+5. tar -zxvf fastdfs-5.08.tar.gz  
+6.cd fastdfs-5.08
+7） ./make.sh && ./make.sh install
+
+8.）cd /etc/fdfs
+
+9)   cp client.conf.sample  client.conf
+      cp tracker.conf.sample tracker.conf
+      cp storage.conf.sample storage.conf
+
+10)修改client.conf    -->内容如下:
+    base_path=/data/tracker
+    tracker_server=192.168.174.137:22122  #这个是主机的tracker server ip地址根据实际情况修改
+
+11）修改tracker.conf--》内容如下：
+     base_path=/data/tracker
+
+12）修改storage.conf--》内容如下
+    base_path=/data/storage
+    store_path0=/data/storage
+   tracker_server=192.168.174.137:22122
+   
+13）创建目录
+      [root@localhost ~]#  mkdir -p /data/tracker
+      [root@localhost ~]#  mkdir -p /data/storage
+
+14）启动tracker
+       fdfs_trackerd  /etc/fdfs/tracker.conf  start 或者 /etc/init.d/fdfs_trackerd start
+  
+15)  启动storage
+       fdfs_storaged  /etc/fdfs/storage.conf start  或者 /etc/init.d/fdfs_storaged start
+
+16)  启动监控
+       fdfs_monitor  /etc/fdfs/client.conf
+
+17)  上传文件测试：将/root/1.jpg 上传到storage
+       fdfs_upload_file  /etc/fdfs/client.conf  /root/1.jpg
+     （ 上传成功后保存在 /data/storage/data/00/00/wKiuiV8GPfiAEVx2AAHYVw7HxmQ915.jpg
+       映射为：group1/M00/00/00/wKiuiV8GPfiAEVx2AAHYVw7HxmQ915.jpg）
+18）下载测试
+         fdfs_download_file  /etc/fdfs/client.conf  group1/M00/00/00/wKiuiV8GPfiAEVx2AAHYVw7HxmQ915.jpg /root/2.jpg
+          
+19)设置开机启动
+      chkconfig fdfs_trackerd on
+      chkconfig fdfs_storaged on
