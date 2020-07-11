@@ -1,0 +1,39 @@
+1.首先必须下载好对应文件并且利用ssh工具如finalshell上传到centos中
+注意：安装 fastdfs-5.11版本的路径： wget https://github.com/happyfish100/fastdfs/archive/V5.11.tar.gz
+           对应的fastdfs-nginx-module：wget https://github.com/happyfish100/fastdfs-nginx-module/archive/V1.20.tar.gz
+2.具体过程：
+1）解压缩nginx-1.10.2.tar.gz（最后以root用户登陆）
+[root@localhost ~]# tar -zxvf nginx-1.10.2.tar.gz
+2）解压缩fastdfs-nginx-module.zip
+[root@localhost ~]# unzip fastdfs-nginx-module.zip
+3）cd nginx-1.10.2
+4)将fastdfs-nginx-module模块的源代码添加到nginx配置中
+[root@localhost ~]# ./configure --add-module=/root/fastdfs-nginx-module/src/ --prefix=/usr/local/nginx
+编译安装nginx
+make && make install
+5）复制以下文件
+      cp /root/fastdfs-nginx-module/src/mod_fastdfs.conf  /etc/fdfs
+
+       cp fastdfs-5.08/conf/http.conf  /etc/fdfs
+       cp fastdfs-5.08/conf/mime.types  /etc/fdfs
+6）修改nginx.conf
+vi /usr/local/nginx/conf/nginx.conf
+
+server{
+            listen    8888;##该端口在storage.conf中的http.server_port的值
+            server_name localhost;
+            location ~/group[0-9]/{ #配置fastdfs的nginx模块
+               ngx_fastdfs_module;
+            }
+
+修改 /etc/fdfs/mod_fastdfs.conf
+vim  /etc/fdfs/mod_fastdfs.conf
+tracker_server=192.168.174.137:22122 #自己的tracker地址
+url_have_group_name=true #设置为允许有组名
+group_name=group1
+#配置存储目录，和fdfs_storage的store_path0的值一样。
+store_path0=/data/storage
+
+启动nginx
+cd /usr/local/nginx/sbin
+./nginx -c /usr/local/nginx/conf/nginx.conf
