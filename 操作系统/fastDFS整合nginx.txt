@@ -1,21 +1,21 @@
 1.首先必须下载好对应文件并且利用ssh工具如finalshell上传到centos中
-注意：安装 fastdfs-5.11版本的路径： wget https://github.com/happyfish100/fastdfs/archive/V5.11.tar.gz
-           对应的fastdfs-nginx-module：wget https://github.com/happyfish100/fastdfs-nginx-module/archive/V1.20.tar.gz
+ 
 2.具体过程：
-1）解压缩nginx-1.10.2.tar.gz（最后以root用户登陆）
-[root@localhost ~]# tar -zxvf nginx-1.10.2.tar.gz
-2）解压缩fastdfs-nginx-module.zip
-[root@localhost ~]# unzip fastdfs-nginx-module.zip
-3）cd nginx-1.10.2
+1）解压缩nginx-1.12.1.tar.gz（最后以root用户登陆） 
+[root@localhost ~]# tar -zxvf nginx-1.12.1.tar.gz       
+2）解压缩fastdfs-nginx-module-1.22.tar.gz                           
+[root@localhost ~]# unzip fastdfs-nginx-module-1.22.tar.gz
+3）cd nginx-1.12.1
 4)将fastdfs-nginx-module模块的源代码添加到nginx配置中
-[root@localhost ~]# ./configure --add-module=/root/fastdfs-nginx-module/src/ --prefix=/usr/local/nginx
+[root@localhost ~]#
+                                  ./configure --add-module=/root/fastdfs-nginx-module-1.22/src/ --prefix=/usr/local/nginx
 编译安装nginx
 make && make install
+4.1)cd ~
 5）复制以下文件
-      cp /root/fastdfs-nginx-module/src/mod_fastdfs.conf  /etc/fdfs
-
-       cp fastdfs-5.08/conf/http.conf  /etc/fdfs
-       cp fastdfs-5.08/conf/mime.types  /etc/fdfs
+      cp /root/fastdfs-nginx-module-1.22/src/mod_fastdfs.conf  /etc/fdfs 
+      cp fastdfs/conf/http.conf  /etc/fdfs                               
+      cp fastdfs/conf/mime.types  /etc/fdfs                              
 6）修改nginx.conf
 vi /usr/local/nginx/conf/nginx.conf
 
@@ -35,5 +35,7 @@ group_name=group1
 store_path0=/data/storage
 
 启动nginx
-cd /usr/local/nginx/sbin
-./nginx -c /usr/local/nginx/conf/nginx.conf
+/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf 
+
+设置开机启动
+echo "/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf " | tee -a /etc/rc.d/rc.local 
