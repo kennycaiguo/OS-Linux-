@@ -1,6 +1,8 @@
 # OS-Linux-
 linux相关电子书
 # <a href="https://github.com/happyfish100/fastdfs/releases">fastDFS源码下载</a>
+# <a href="https://github.com/kennycaiguo/OS-Linux-and-more/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/centos6.5X64%E5%AE%89%E8%A3%85fastdfs.txt">centos6.5安装fastDFS</a>
+# <a href="https://www.cnblogs.com/sunmmi/articles/10566797.html">centos6.5升级fastdfs-5.08到v6.06，这样才可以整合nginx</a>
 # <a href="https://github.com/kennycaiguo/OS-Linux-and-more/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/fastDFS%E6%95%B4%E5%90%88nginx.txt">fastdfs整合nginx</a>
 # <a href="https://man.linuxde.net/download/CentOS_6_5">CentOS6.5下载，CentOS 6.5 iso下载</a>
 # <a href="http://mirror.nsc.liu.se/centos-store/6.5/isos/x86_64/">CentOS 6.5 iso下载2</a>
