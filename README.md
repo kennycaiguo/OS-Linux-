@@ -12,6 +12,8 @@ linux相关电子书
 # <a href="https://learnku.com/articles/35042">MySQL 安装常见错误</a>
 # <a href="https://juejin.im/post/5c088b066fb9a049d4419985">CentOS 7 - 安装MySQL 5.7</a>
 # <a href="https://www.jianshu.com/p/5cad576e5270">CentOS 7修改MySQL密码 </a>
+# <a href="https://www.linuxprobe.com/install-rabbitmq-on-centos-7.html">CentOS 7安装RabbitMQ </a>
+
 # 关于mysql5.7的配置问题
 想进入mysql的时候碰到问题
 
