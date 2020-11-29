@@ -1,6 +1,7 @@
 # OS-Linux-
 linux相关电子书
 # <a href="https://www.cnblogs.com/jfzhu/p/13467226.html">Linux快速搭建C/C++开发环境</a>
+# <a href="https://www.oschina.net/news/76368/best-linux-ide-editors-source-code-editors">17 个 Linux 下用于 C/C++ 的最好的 IDE</a>
 # <a href="https://github.com/happyfish100/fastdfs/releases">fastDFS源码下载</a>
 # <a href="https://github.com/kennycaiguo/OS-Linux-and-more/blob/master/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/centos6.5X64%E5%AE%89%E8%A3%85fastdfs.txt">centos6.5安装fastDFS</a>
 # <a href="https://www.cnblogs.com/sunmmi/articles/10566797.html">centos6.5升级fastdfs-5.08到v6.06，这样才可以整合nginx</a>
